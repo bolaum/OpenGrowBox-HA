@@ -1,10 +1,8 @@
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from custom_components.opengrowbox.const import DOMAIN
-from custom_components.opengrowbox.coordinator import IntegrationCoordinator
-
-
+from .const import DOMAIN
+from .coordinator import IntegrationCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 

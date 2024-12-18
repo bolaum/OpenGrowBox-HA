@@ -1,6 +1,7 @@
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.restore_state import RestoreEntity
 import logging
-from custom_components.opengrowbox.const import DOMAIN
+from .const import DOMAIN
 import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
@@ -100,36 +101,36 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Create all sensors in a single array
     sensors = [
         # VPD Sensors
-        CustomSensor(f"{coordinator.hub_name}_CurrentVPD", coordinator.hub_name, coordinator, initial_value=0.0, device_class="vpd"),
-        CustomSensor(f"{coordinator.hub_name}_AVGTemperature", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"{coordinator.hub_name}_AVGDewpoint", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"{coordinator.hub_name}_AVGHumidity", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
+        CustomSensor(f"OGB_CurrentVPD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="vpd"),
+        CustomSensor(f"OGB_AVGTemperature_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="temperature"),
+        CustomSensor(f"OGB_AVGDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="temperature"),
+        CustomSensor(f"OGB_AVGHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="humidity"),
 
         # Ambient Sensors
-        CustomSensor(f"{coordinator.hub_name}_AmbientTemperature", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"{coordinator.hub_name}_AmbientDewpoint", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"{coordinator.hub_name}_AmbientHumidity", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
-        CustomSensor(f"{coordinator.hub_name}_AmbientVPD", coordinator.hub_name, coordinator, initial_value=0.0, device_class="vpd"),
+        CustomSensor(f"OGB_AmbientVPD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="vpd"),
+        CustomSensor(f"OGB_AmbientTemperature_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_AmbientDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_AmbientHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
 
         # Outside Sensors
-        CustomSensor(f"{coordinator.hub_name}_OutsiteTemperature", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"{coordinator.hub_name}_OutsiteDewpoint", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"{coordinator.hub_name}_OutsiteHumidity", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
+        CustomSensor(f"OGB_OutsiteTemperature{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_OutsiteDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_OutsiteHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
 
         # Soil Sensors
-        CustomSensor(f"{coordinator.hub_name}_SoilMoisture", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
-        CustomSensor(f"{coordinator.hub_name}_SoilEC", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
-        CustomSensor(f"{coordinator.hub_name}_RootTemp", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_SoilMoisture_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
+        CustomSensor(f"OGB_SoilEC_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
+        CustomSensor(f"OGB_RootTemp_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
         
         # Light Sensors
-        CustomSensor(f"{coordinator.hub_name}_LightIntensity", coordinator.hub_name, coordinator, initial_value=0.0, device_class="light"),
-        CustomSensor(f"{coordinator.hub_name}_LightPower", coordinator.hub_name, coordinator, initial_value=0.0, device_class="power"),
-        CustomSensor(f"{coordinator.hub_name}_PPFD", coordinator.hub_name, coordinator, initial_value=0.0, device_class="ppfd"),
-        CustomSensor(f"{coordinator.hub_name}_DLI", coordinator.hub_name, coordinator, initial_value=0.0, device_class="dli"),
+        CustomSensor(f"OGB_LightIntensity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="light"),
+        CustomSensor(f"OGB_LightPower_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="power"),
+        CustomSensor(f"OGB_PPFD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="ppfd"),
+        CustomSensor(f"OGB_DLI_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="dli"),
 
         # CO2 and Pressure Sensors
-        CustomSensor(f"{coordinator.hub_name}_CO2", coordinator.hub_name, coordinator, initial_value=400.0, device_class="co2"),
-        CustomSensor(f"{coordinator.hub_name}_Pressure", coordinator.hub_name, coordinator, initial_value=950.0, device_class="pressure"),
+        CustomSensor(f"OGB_CO2_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=400.0, device_class="co2"),
+        CustomSensor(f"OGB_Pressure_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=950.0, device_class="pressure"),
     ]
 
     # Register the sensors globally in hass.data

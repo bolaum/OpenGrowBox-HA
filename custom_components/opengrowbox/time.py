@@ -1,7 +1,8 @@
 from datetime import time
 from homeassistant.components.time import TimeEntity
+from homeassistant.helpers.restore_state import RestoreEntity
 import logging
-from custom_components.opengrowbox.const import DOMAIN
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -85,8 +86,16 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Create time entities
     times = [
-        CustomTime(f"{coordinator.hub_name}_LightOnTime", coordinator.hub_name, coordinator, initial_time="08:00:00"),
-        CustomTime(f"{coordinator.hub_name}_LightOffTime", coordinator.hub_name, coordinator, initial_time="20:00:00"),
+        CustomTime(f"OGB_LightOnTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="08:00:00"),
+        CustomTime(f"OGB_LightOffTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="20:00:00"),
+        CustomTime(f"OGB_GLS_StartTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+        
+        CustomTime(f"OGB_SunRiseTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+        CustomTime(f"OGB_SunSetTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+         
+        #CustomTime(f"OGB_GrowTimeToal_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+        #CustomTime(f"OGB_FlowerTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+                       
     ]
 
     if "times" not in hass.data[DOMAIN]:

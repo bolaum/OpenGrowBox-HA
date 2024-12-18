@@ -1,6 +1,7 @@
 from homeassistant.components.number import NumberEntity
+from homeassistant.helpers.restore_state import RestoreEntity
 import logging
-from custom_components.opengrowbox.const import DOMAIN
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,14 +77,30 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Create number entities
     numbers = [
-        CustomNumber(f"{coordinator.hub_name}_LeafTemp", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_LeafTemp_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                 min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=2.0),
-        CustomNumber(f"{coordinator.hub_name}_VPDTarget", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_VPDTarget_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                     min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=0.0),
-        CustomNumber(f"{coordinator.hub_name}_TargetTemperature", coordinator.hub_name, coordinator,
-                     min_value=10.0, max_value=35.0, step=0.1, unit="°C", initial_value=20.0),
-        CustomNumber(f"{coordinator.hub_name}_TargetHumidity", coordinator.hub_name, coordinator,
-                     min_value=20.0, max_value=80.0, step=1.0, unit="%", initial_value=60.0),
+      
+        CustomNumber(f"OGB_TemperatureWeight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=00.0, max_value=2.0, step=0.1, unit="X", initial_value=1.0),
+        CustomNumber(f"OGB_HumidityWeight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=2.0, step=0.1, unit="X", initial_value=1.0),
+        
+        ##PUMP
+        CustomNumber(f"OGB_PumpIntervall_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=24, step=0.1, unit="Hours", initial_value=0),
+        CustomNumber(f"OGB_Waterduration_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=600, step=1, unit="Seconds", initial_value=0),
+        
+        
+        ##CO2
+        CustomNumber(f"OGB_CO2MinValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
+        CustomNumber(f"OGB_CO2MaxValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
+        CustomNumber(f"OGB_CO2TargetValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
     ]
 
     if "numbers" not in hass.data[DOMAIN]:

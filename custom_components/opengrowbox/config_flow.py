@@ -1,6 +1,6 @@
 from homeassistant import config_entries
 import voluptuous as vol
-from custom_components.opengrowbox.const import DOMAIN
+from .const import DOMAIN
 
 class IntegrationConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for the integration."""

@@ -1,7 +1,7 @@
 from homeassistant.components.select import SelectEntity
 from homeassistant.helpers.restore_state import RestoreEntity
 import logging
-from custom_components.opengrowbox.const import DOMAIN
+from .const import DOMAIN
 import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)

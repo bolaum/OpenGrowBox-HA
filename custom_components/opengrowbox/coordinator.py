@@ -2,8 +2,8 @@ from homeassistant.helpers.area_registry import async_get as async_get_area_regi
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from datetime import timedelta
 import logging
-from custom_components.opengrowbox.select import OpenGrowBoxRoomSelector
-from custom_components.opengrowbox.const import DOMAIN
+from .select import OpenGrowBoxRoomSelector
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,13 +21,14 @@ class IntegrationCoordinator(DataUpdateCoordinator):
             "switch": [],
             "select": [],
             "time": [],
+            "input_select": [],
         }
         self.room_selector = None  # Store the Room Selector instance
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN}_{self.hub_name}",
-            update_interval=timedelta(seconds=10),
+            update_interval=timedelta(seconds=1),
         )
 
     async def update_room_selector(self):
