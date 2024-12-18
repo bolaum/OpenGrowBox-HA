@@ -8,5 +8,6 @@
   "dependencies": [],
   "iot_class": "local_polling",
   "config_flow": true,
-  "integration_type":"hub"
+  "integration_type":"hub",
+  "issue_tracker": "https://github.com/OpenGrow-Box/OpenGrowBox-HA/issues"
 }
