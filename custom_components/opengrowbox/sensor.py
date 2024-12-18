@@ -1,6 +1,6 @@
 from homeassistant.helpers.entity import Entity
 import logging
-from .const import DOMAIN
+from custom_components.opengrowbox.const import DOMAIN
 import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)

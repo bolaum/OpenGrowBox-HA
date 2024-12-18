@@ -1,7 +1,7 @@
 from datetime import time
 from homeassistant.components.time import TimeEntity
 import logging
-from .const import DOMAIN
+from custom_components.opengrowbox.const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 

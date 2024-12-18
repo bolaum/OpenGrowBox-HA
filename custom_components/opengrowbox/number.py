@@ -1,6 +1,6 @@
 from homeassistant.components.number import NumberEntity
 import logging
-from .const import DOMAIN
+from custom_components.opengrowbox.const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
