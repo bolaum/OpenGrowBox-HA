@@ -157,8 +157,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     sensor.update_state(value)
                     _LOGGER.info(f"Updated sensor '{sensor.name}' to value: {value}")
                     return
-
-            _LOGGER.warning(f"Sensor with entity_id '{entity_id}' not found.")
+            #_LOGGER.warning(f"Sensor with entity_id '{entity_id}' not found.")
 
         # Register the service in Home Assistant
         hass.services.async_register(
