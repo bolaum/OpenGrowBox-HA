@@ -154,6 +154,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                      options=["YES", "NO",""], initial_value="NO"),
         CustomSelect(f"OGB_OwnWeights_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      options=["YES", "NO",""], initial_value="NO"),
+        CustomSelect(f"OGB_PIDControl_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     options=["YES", "NO",""], initial_value="NO"),
         CustomSelect(f"OGB_CO2_Control_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      options=["YES", "NO",""], initial_value="NO"),
         CustomSelect(f"OGB_LightControl_{coordinator.hub_name}", coordinator.hub_name, coordinator,

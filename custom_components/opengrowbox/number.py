@@ -101,6 +101,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                      min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
         CustomNumber(f"OGB_CO2TargetValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
+        
+        ##PID
+        CustomNumber(f"OGB_ProportionalFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
+        CustomNumber(f"OGB_IntegralFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
+        CustomNumber(f"OGB_DifferenzialFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),
     ]
 
     if "numbers" not in hass.data[DOMAIN]:
