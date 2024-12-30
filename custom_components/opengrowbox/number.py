@@ -120,25 +120,25 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         
         ##PID VPD
         CustomNumber(f"OGB_ProportionalVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
+                     min_value=0.0, max_value=100, step=0.1, unit="P", initial_value=1.0),
         CustomNumber(f"OGB_IntegralVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
+                     min_value=0.0, max_value=1, step=0.1, unit="I", initial_value=0.01),
         CustomNumber(f"OGB_DerivativVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),
+                     min_value=0.0, max_value=10, step=0.1, unit="D", initial_value=0.1),
         #PID TEMP
         CustomNumber(f"OGB_ProportionalTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
+                     min_value=0.0, max_value=100, step=0.1, unit="P", initial_value=1.0),
         CustomNumber(f"OGB_IntegralTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
+                     min_value=0.0, max_value=1, step=0.1, unit="I", initial_value=0.01),
         CustomNumber(f"OGB_DerivativTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),
+                     min_value=0.0, max_value=10, step=0.1, unit="D", initial_value=0.1),
         #PID Hum
         CustomNumber(f"OGB_ProportionalHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
+                     min_value=0.0, max_value=100, step=0.1, unit="P", initial_value=1.0),
         CustomNumber(f"OGB_IntegralHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
+                     min_value=0.0, max_value=1, step=0.1, unit="I", initial_value=0.01),
         CustomNumber(f"OGB_DerivativHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),       
+                     min_value=0.0, max_value=10, step=0.1, unit="D", initial_value=0.1),       
     ]
 
     if "numbers" not in hass.data[DOMAIN]:
