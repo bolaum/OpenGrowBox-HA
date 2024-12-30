@@ -6,8 +6,8 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-class CustomTime(TimeEntity):
-    """Custom time entity for multiple hubs."""
+class CustomTime(TimeEntity, RestoreEntity):
+    """Custom time entity for multiple hubs with state restoration."""
 
     def __init__(self, name, hub_name, coordinator, initial_time="00:00"):
         """Initialize the time entity."""
@@ -22,7 +22,6 @@ class CustomTime(TimeEntity):
         """Parse time from a string or return valid time object."""
         try:
             if isinstance(time_input, time):
-                # Wenn bereits ein time-Objekt, direkt zurückgeben
                 return time_input
             if isinstance(time_input, str):
                 parts = list(map(int, time_input.split(":")))
@@ -33,7 +32,7 @@ class CustomTime(TimeEntity):
                     hours, minutes, seconds = parts
                 else:
                     raise ValueError("Invalid time format")
-                
+
                 if 0 <= hours < 24 and 0 <= minutes < 60 and 0 <= seconds < 60:
                     return time(hour=hours, minute=minutes, second=seconds)
                 else:
@@ -80,6 +79,18 @@ class CustomTime(TimeEntity):
         except ValueError as e:
             _LOGGER.error(f"Failed to set time for '{self._name}': {e}")
 
+    async def async_added_to_hass(self):
+        """Restore state when the entity is added to Home Assistant."""
+        await super().async_added_to_hass()
+        state = await self.async_get_last_state()
+        if state and state.state:
+            try:
+                restored_time = self._parse_time(state.state)
+                self._time = restored_time
+                _LOGGER.info(f"Restored time for '{self._name}': {restored_time}")
+            except ValueError:
+                _LOGGER.warning(f"Failed to restore time for '{self._name}', using default.")
+
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up time entities."""
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
@@ -89,13 +100,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         CustomTime(f"OGB_LightOnTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="08:00:00"),
         CustomTime(f"OGB_LightOffTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="20:00:00"),
         CustomTime(f"OGB_GLS_StartTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
-        
         CustomTime(f"OGB_SunRiseTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
         CustomTime(f"OGB_SunSetTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
-         
-        #CustomTime(f"OGB_GrowTimeToal_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
-        #CustomTime(f"OGB_FlowerTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
-                       
     ]
 
     if "times" not in hass.data[DOMAIN]:

@@ -62,10 +62,6 @@ class CustomSensor(Entity):
             return "°C"
         elif self._device_class == "humidity":
             return "%"
-        elif self._device_class == "pressure":
-            return "hPa"
-        elif self._device_class == "co2":
-            return "ppm"
         elif self._device_class == "vpd":
             return "kPa"
         elif self._device_class == "moisture":
@@ -117,20 +113,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         CustomSensor(f"OGB_OutsiteDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
         CustomSensor(f"OGB_OutsiteHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
 
+        # Light Sensors
+        CustomSensor(f"OGB_PPFD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="ppfd"),
+        CustomSensor(f"OGB_DLI_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="dli"),
+
         # Soil Sensors
         CustomSensor(f"OGB_SoilMoisture_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
         CustomSensor(f"OGB_SoilEC_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
         CustomSensor(f"OGB_RootTemp_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        
-        # Light Sensors
-        CustomSensor(f"OGB_LightIntensity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="light"),
-        CustomSensor(f"OGB_LightPower_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="power"),
-        CustomSensor(f"OGB_PPFD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="ppfd"),
-        CustomSensor(f"OGB_DLI_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="dli"),
 
-        # CO2 and Pressure Sensors
-        CustomSensor(f"OGB_CO2_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=400.0, device_class="co2"),
-        CustomSensor(f"OGB_Pressure_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=950.0, device_class="pressure"),
     ]
 
     # Register the sensors globally in hass.data

@@ -5,7 +5,7 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-class CustomNumber(NumberEntity):
+class CustomNumber(NumberEntity,RestoreEntity):
     """Custom number entity for multiple hubs."""
 
     def __init__(self, name, hub_name, coordinator, min_value, max_value, step, unit, initial_value=None):
@@ -61,6 +61,22 @@ class CustomNumber(NumberEntity):
             "manufacturer": "OpenGrowBox",
             "suggested_area": self.hub_name,  # Optional: Gibt einen Hinweis für den Bereich
         }
+        
+    async def async_added_to_hass(self):
+        """Restore last known state on startup."""
+        await super().async_added_to_hass()
+        last_state = await self.async_get_last_state()
+        if last_state and last_state.state is not None:
+            try:
+                # Stelle den Wert nur wieder her, wenn er innerhalb des zulässigen Bereichs liegt
+                restored_value = float(last_state.state)
+                if self._min_value <= restored_value <= self._max_value:
+                    self._value = restored_value
+                    _LOGGER.info(f"Restored value for '{self._name}': {restored_value}")
+                else:
+                    _LOGGER.warning(f"Restored value for '{self._name}' out of range: {restored_value}")
+            except ValueError:
+                _LOGGER.warning(f"Invalid restored value for '{self._name}': {last_state.state}")
 
     async def async_set_native_value(self, value: float):
         """Set a new value."""
@@ -102,13 +118,27 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         CustomNumber(f"OGB_CO2TargetValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
         
-        ##PID
-        CustomNumber(f"OGB_ProportionalFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        ##PID VPD
+        CustomNumber(f"OGB_ProportionalVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
-        CustomNumber(f"OGB_IntegralFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_IntegralVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
-        CustomNumber(f"OGB_DifferenzialFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_DerivativVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),
+        #PID TEMP
+        CustomNumber(f"OGB_ProportionalTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
+        CustomNumber(f"OGB_IntegralTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
+        CustomNumber(f"OGB_DerivativTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),
+        #PID Hum
+        CustomNumber(f"OGB_ProportionalHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=100, step=5, unit="P", initial_value=1.0),
+        CustomNumber(f"OGB_IntegralHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=1, step=5, unit="I", initial_value=0.01),
+        CustomNumber(f"OGB_DerivativHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                     min_value=0.0, max_value=10, step=5, unit="D", initial_value=0.1),       
     ]
 
     if "numbers" not in hass.data[DOMAIN]:

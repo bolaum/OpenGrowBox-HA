@@ -21,7 +21,6 @@ class IntegrationCoordinator(DataUpdateCoordinator):
             "switch": [],
             "select": [],
             "time": [],
-            "input_select": [],
         }
         self.room_selector = None  # Store the Room Selector instance
         super().__init__(

@@ -19,7 +19,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     await coordinator.update_room_selector()
 
     # Load all platforms
-    for platform in ["sensor", "number", "select", "time","switch","input_select"]:
+    for platform in ["sensor", "number", "select", "time","switch"]:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(config_entry, platform)
         )
@@ -29,7 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(
-        config_entry, ["sensor", "number", "select", "time","switch","input_select"]
+        config_entry, ["sensor", "number", "select", "time","switch"]
     )
     if unload_ok:
         hass.data[DOMAIN].pop(config_entry.entry_id)
