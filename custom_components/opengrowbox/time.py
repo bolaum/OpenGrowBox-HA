@@ -99,9 +99,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     times = [
         CustomTime(f"OGB_LightOnTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="08:00:00"),
         CustomTime(f"OGB_LightOffTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="20:00:00"),
-        CustomTime(f"OGB_GLS_StartTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+
         CustomTime(f"OGB_SunRiseTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
         CustomTime(f"OGB_SunSetTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+
+        CustomTime(f"OGB_GLS_StartTime_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_time="00:00:00"),
+
     ]
 
     if "times" not in hass.data[DOMAIN]:

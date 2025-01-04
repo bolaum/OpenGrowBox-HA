@@ -166,7 +166,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         CustomSelect(f"OGB_PlantStage_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      options=["Germination", "Clones", "EarlyVeg", "MidVeg", "LateVeg", "EarlyFlower", "MidFlower", "LateFlower",""], initial_value="Germination"),
         CustomSelect(f"OGB_TentMode_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["VPD Perfection", "IN-VPD-Range", "Targeted VPD", "Experimentel","Drying","Disabled",""], initial_value="Disabled"),
+                     options=["VPD Perfection", "IN-VPD-Range", "Targeted VPD", "GLBJ-Mode","Drying","Disabled",""], initial_value="Disabled"),
         CustomSelect(f"OGB_HoldVPDNight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      options=["YES", "NO",""], initial_value="YES"),
         CustomSelect(f"OGB_ControlSet_{coordinator.hub_name}", coordinator.hub_name, coordinator,
@@ -194,15 +194,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         CustomSelect(f"OGB_DryingModes_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      options=["elClassico", "SharkMouse","dewBased",""],initial_value=""),
         ##DEVICES
-        CustomSelect(f"OGB_LightSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_ExhaustSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_VentsSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_HumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_DehumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_HeaterSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_CoolerSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_ClimateSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
-        CustomSelect(f"OGB_CO2Select_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[], initial_value=None),
+        CustomSelect(f"OGB_LightSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_ExhaustSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_VentsSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_HumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_DehumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_HeaterSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_CoolerSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_ClimateSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_CO2Select_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
     ]
 
     # Register the Selects globally in hass.data

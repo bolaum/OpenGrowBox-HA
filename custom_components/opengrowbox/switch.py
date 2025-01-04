@@ -76,7 +76,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Create switches with placeholders for customization
     switches = [
         #TemplateSwitch
-        CustomSwitch(f"OGB_TemplateSwitch{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_state=False),
+        CustomSwitch(f"OGB_KillSwitch{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_state=False),
     ]
 
     # Register the switches globally in hass.data

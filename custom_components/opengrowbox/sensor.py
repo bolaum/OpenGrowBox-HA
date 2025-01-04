@@ -64,18 +64,10 @@ class CustomSensor(Entity):
             return "%"
         elif self._device_class == "vpd":
             return "kPa"
-        elif self._device_class == "moisture":
-            return "%"
-        elif self._device_class == "light":
-            return "lx"
-        elif self._device_class == "power":
-            return "W"
         elif self._device_class == "ppfd":
             return "μmol/m²/s"
         elif self._device_class == "dli":
             return "mol/m²/day"
-        elif self._device_class == "battery":
-            return "%"
         return None
 
     @property
@@ -116,12 +108,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         # Light Sensors
         CustomSensor(f"OGB_PPFD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="ppfd"),
         CustomSensor(f"OGB_DLI_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="dli"),
-
-        # Soil Sensors
-        CustomSensor(f"OGB_SoilMoisture_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
-        CustomSensor(f"OGB_SoilEC_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="moisture"),
-        CustomSensor(f"OGB_RootTemp_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-
     ]
 
     # Register the sensors globally in hass.data
