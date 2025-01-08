@@ -97,7 +97,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=2.0),
         CustomNumber(f"OGB_VPDTarget_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                     min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=0.0),
+        CustomNumber(f"OGB_VPDTolerance_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+                    min_value=0.0, max_value=0.2, step=0.01, unit="°Tolerance", initial_value=0.02),
       
+
+   
         CustomNumber(f"OGB_TemperatureWeight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                      min_value=00.0, max_value=2.0, step=0.1, unit="X", initial_value=1.0),
         CustomNumber(f"OGB_HumidityWeight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
