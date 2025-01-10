@@ -195,6 +195,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                      options=["ElClassico", "SharkMouse","DewBased",""],initial_value=""),
         ##DEVICES
         CustomSelect(f"OGB_LightSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_LightSelect2_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_LightSelect3_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
         CustomSelect(f"OGB_ExhaustSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
         CustomSelect(f"OGB_VentsSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
         CustomSelect(f"OGB_HumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),

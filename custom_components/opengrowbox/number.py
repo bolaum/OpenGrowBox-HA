@@ -96,9 +96,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         CustomNumber(f"OGB_LeafTemp_{coordinator.hub_name}", coordinator.hub_name, coordinator,
                 min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=2.0),
         CustomNumber(f"OGB_VPDTarget_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                    min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=0.0),
+                    min_value=0.0, max_value=5.0, step=0.1, unit="kPa", initial_value=0.0),
         CustomNumber(f"OGB_VPDTolerance_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                    min_value=0.0, max_value=0.2, step=0.01, unit="°Tolerance", initial_value=0.02),
+                    min_value=0.0, max_value=0.2, step=0.01, unit="kPa", initial_value=0.02),
       
 
    
