@@ -9,14 +9,14 @@ class IntegrationConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         if user_input is not None:
             return self.async_create_entry(
-                title=user_input["hub_name"], data=user_input
+                title=user_input["room_name"], data=user_input
             )
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required("hub_name"): str,
+                    vol.Required("room_name"): str,
                 }
             ),
         )

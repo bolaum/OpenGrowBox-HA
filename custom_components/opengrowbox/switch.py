@@ -9,13 +9,13 @@ _LOGGER = logging.getLogger(__name__)
 class CustomSwitch(ToggleEntity, RestoreEntity):
     """Custom switch for multiple hubs with state restoration."""
 
-    def __init__(self, name, hub_name, coordinator, initial_state=False):
+    def __init__(self, name, room_name, coordinator, initial_state=False):
         """Initialize the switch."""
         self._name = name
         self._state = initial_state  # Initial state
-        self.hub_name = hub_name
+        self.room_name = room_name
         self.coordinator = coordinator
-        self._unique_id = f"{DOMAIN}_{hub_name}_{name.lower().replace(' ', '_')}"
+        self._unique_id = f"{DOMAIN}_{room_name}_{name.lower().replace(' ', '_')}"
 
     @property
     def unique_id(self):
@@ -40,7 +40,7 @@ class CustomSwitch(ToggleEntity, RestoreEntity):
             "name": f"Device for {self._name}",
             "model": "Switch Device",
             "manufacturer": "OpenGrowBox",
-            "suggested_area": self.hub_name,
+            "suggested_area": self.room_name,
         }
 
     async def async_turn_on(self, **kwargs):
@@ -76,7 +76,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Create switches with placeholders for customization
     switches = [
         #TemplateSwitch
-        CustomSwitch(f"OGB_KillSwitch{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_state=False),
+        CustomSwitch(f"OGB_TemplateSwitch{coordinator.room_name}", coordinator.room_name, coordinator, initial_state=False),
     ]
 
     # Register the switches globally in hass.data

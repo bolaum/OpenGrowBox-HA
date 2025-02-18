@@ -9,14 +9,14 @@ _LOGGER = logging.getLogger(__name__)
 class CustomSensor(Entity):
     """Custom sensor for multiple hubs with update capability and graph support."""
 
-    def __init__(self, name, hub_name, coordinator, initial_value=None, device_class=None):
+    def __init__(self, name, room_name, coordinator, initial_value=None, device_class=None):
         """Initialize the sensor."""
         self._name = name
         self._state = initial_value  # Initial value
-        self.hub_name = hub_name
+        self.room_name = room_name
         self.coordinator = coordinator
         self._device_class = device_class  # e.g., temperature, humidity, light
-        self._unique_id = f"{DOMAIN}_{hub_name}_{name.lower().replace(' ', '_')}"
+        self._unique_id = f"{DOMAIN}_{room_name}_{name.lower().replace(' ', '_')}"
 
     @property
     def unique_id(self):
@@ -51,7 +51,7 @@ class CustomSensor(Entity):
             "name": f"Device for {self._name}",
             "model": "Sensor Device",
             "manufacturer": "OpenGrowBox",
-            "suggested_area": self.hub_name,
+            "suggested_area": self.room_name,
         }
 
 
@@ -68,12 +68,16 @@ class CustomSensor(Entity):
             return "μmol/m²/s"
         elif self._device_class == "dli":
             return "mol/m²/day"
+        elif self._device_class == "days":
+            return "Days"
+        elif self._device_class == "minutes":
+            return "Minutes"
         return None
 
     @property
     def extra_state_attributes(self):
         """Return extra attributes for the entity."""
-        return {"hub_name": self.hub_name}
+        return {"room_name": self.room_name}
 
     def update_state(self, new_state):
         """Update the state and notify Home Assistant."""
@@ -89,25 +93,32 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Create all sensors in a single array
     sensors = [
         # VPD Sensors
-        CustomSensor(f"OGB_CurrentVPD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="vpd"),
-        CustomSensor(f"OGB_AVGTemperature_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="temperature"),
-        CustomSensor(f"OGB_AVGDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="temperature"),
-        CustomSensor(f"OGB_AVGHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=None, device_class="humidity"),
+        CustomSensor(f"OGB_CurrentVPD_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=None, device_class="vpd"),
+        CustomSensor(f"OGB_AVGTemperature_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=None, device_class="temperature"),
+        CustomSensor(f"OGB_AVGDewpoint_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=None, device_class="temperature"),
+        CustomSensor(f"OGB_AVGHumidity_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=None, device_class="humidity"),
 
         # Ambient Sensors
-        CustomSensor(f"OGB_AmbientVPD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="vpd"),
-        CustomSensor(f"OGB_AmbientTemperature_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"OGB_AmbientDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"OGB_AmbientHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
+        CustomSensor(f"OGB_AmbientVPD_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="vpd"),
+        CustomSensor(f"OGB_AmbientTemperature_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_AmbientDewpoint_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_AmbientHumidity_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="humidity"),
 
         # Outside Sensors
-        CustomSensor(f"OGB_OutsiteTemperature{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"OGB_OutsiteDewpoint_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="temperature"),
-        CustomSensor(f"OGB_OutsiteHumidity_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="humidity"),
+        CustomSensor(f"OGB_OutsiteTemperature{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_OutsiteDewpoint_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="temperature"),
+        CustomSensor(f"OGB_OutsiteHumidity_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="humidity"),
 
         # Light Sensors
-        CustomSensor(f"OGB_PPFD_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="ppfd"),
-        CustomSensor(f"OGB_DLI_{coordinator.hub_name}", coordinator.hub_name, coordinator, initial_value=0.0, device_class="dli"),
+        CustomSensor(f"OGB_PPFD_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="ppfd"),
+        CustomSensor(f"OGB_DLI_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0.0, device_class="dli"),
+        
+        # PlantTimeSensors
+        CustomSensor(f"OGB_PlantTotalDays_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0, device_class="days"),
+        CustomSensor(f"OGB_TotalBloomDays_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0, device_class="days"),
+        CustomSensor(f"OGB_ChopChopTime_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0, device_class="days"),
+        CustomSensor(f"OGB_PlantFoodNextFeed_{coordinator.room_name}", coordinator.room_name, coordinator, initial_value=0, device_class="Minutes"),
+
     ]
 
     # Register the sensors globally in hass.data
@@ -126,15 +137,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             entity_id = call.data.get("entity_id")
             value = call.data.get("value")
 
-            _LOGGER.info(f"Received request to update sensor '{entity_id}' with value: {value}")
+            _LOGGER.warn(f"Received request to update sensor '{entity_id}' with value: {value}")
 
             # Find and update the corresponding sensor
             for sensor in hass.data[DOMAIN]["sensors"]:
                 if sensor.entity_id == entity_id:
                     sensor.update_state(value)
-                    _LOGGER.info(f"Updated sensor '{sensor.name}' to value: {value}")
+                    _LOGGER.warn(f"Updated sensor '{sensor.name}' to value: {value}")
                     return
-            #_LOGGER.warning(f"Sensor with entity_id '{entity_id}' not found.")
 
         # Register the service in Home Assistant
         hass.services.async_register(

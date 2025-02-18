@@ -75,14 +75,14 @@ class OpenGrowBoxRoomSelector(SelectEntity, RestoreEntity):
 class CustomSelect(SelectEntity, RestoreEntity):
     """Custom select entity with state restoration."""
 
-    def __init__(self, name, hub_name, coordinator, options=None, initial_value=None):
+    def __init__(self, name, room_name, coordinator, options=None, initial_value=None):
         """Initialize the custom select."""
         self._name = name
-        self.hub_name = hub_name
+        self.room_name = room_name
         self._attr_options = options or []  # Home Assistant erwartet _attr_options
         self._attr_current_option = initial_value if initial_value in self._attr_options else None
         self.coordinator = coordinator
-        self._unique_id = f"{DOMAIN}_{hub_name}_{name.lower().replace(' ', '_')}"
+        self._unique_id = f"{DOMAIN}_{room_name}_{name.lower().replace(' ', '_')}"
 
     async def async_added_to_hass(self):
         """Restore last known state on startup."""
@@ -135,7 +135,7 @@ class CustomSelect(SelectEntity, RestoreEntity):
     def extra_state_attributes(self):
         """Return extra attributes."""
         return {
-            "hub_name": self.hub_name,
+            "room_name": self.room_name,
             "options": self._attr_options,  # Hinzufügen der aktuellen Optionen
         }
         
@@ -147,7 +147,7 @@ class CustomSelect(SelectEntity, RestoreEntity):
             "name": f"Device for {self._name}",
             "model": "Select Device",
             "manufacturer": "OpenGrowBox",
-            "suggested_area": self.hub_name,
+            "suggested_area": self.room_name,
         }
 
 
@@ -163,48 +163,42 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Create hub-specific selects
     selects = [
-        CustomSelect(f"OGB_PlantStage_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["Germination", "Clones", "EarlyVeg", "MidVeg", "LateVeg", "EarlyFlower", "MidFlower", "LateFlower",""], initial_value="Germination"),
-        CustomSelect(f"OGB_TentMode_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["VPD Perfection", "IN-VPD-Range", "Targeted VPD", "GLBJ-Mode","Drying","Disabled",""], initial_value="Disabled"),
-        CustomSelect(f"OGB_HoldVPDNight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="YES"),
-        CustomSelect(f"OGB_AmbientBorrow_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_AmbientControl_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_AutoWatering_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_OwnWeights_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_PIDControl_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_CO2_Control_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_LightControl_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_GLS_Control_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_VPDLightControl_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_GLS_PlantType_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["Sativa", "Indica",""],initial_value=""),
-        CustomSelect(f"OGB_OwnDeviceSets_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["YES", "NO",""], initial_value="NO"),
-        CustomSelect(f"OGB_DryingModes_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     options=["ElClassico", "SharkMouse","DewBased",""],initial_value=""),
+        CustomSelect(f"OGB_PlantStage_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["Germination", "Clones", "EarlyVeg", "MidVeg", "LateVeg", "EarlyFlower", "MidFlower", "LateFlower"], initial_value="Germination"),
+        CustomSelect(f"OGB_TentMode_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["VPD Perfection","In VPD Range", "Targeted VPD", "P.I.D Control", "M.P.C Control","Drying","Disabled"], initial_value="Disabled"),
+        CustomSelect(f"OGB_HoldVpdNight_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="YES"),
+        CustomSelect(f"OGB_OwnWeights_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
+        CustomSelect(f"OGB_CO2_Control_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
+        CustomSelect(f"OGB_MinMax_Control_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
+        CustomSelect(f"OGB_LightControl_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
+        CustomSelect(f"OGB_VPDLightControl_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
+        CustomSelect(f"OGB_DryingModes_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["ElClassico", "SharkMouse","DewBased"],initial_value=""),
+     
+     
+        CustomSelect(f"OGB_AmbientBorrow_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
+        CustomSelect(f"OGB_OwnDeviceSets_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     options=["YES", "NO"], initial_value="NO"),
         ##DEVICES
-        CustomSelect(f"OGB_LightSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_LightSelect2_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_LightSelect3_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_ExhaustSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_VentsSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_HumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_DehumidifierSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_HeaterSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_CoolerSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_ClimateSelect_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
-        CustomSelect(f"OGB_CO2Select_{coordinator.hub_name}", coordinator.hub_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Light1_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Light2_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Light3_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Exhaust_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Vents_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Humidifier_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Dehumidifier_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Heater_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Cooler_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_Climate_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
+        CustomSelect(f"OGB_CO2_Device_Select_{coordinator.room_name}", coordinator.room_name, coordinator, options=[""], initial_value=None),
     ]
 
     # Register the Selects globally in hass.data

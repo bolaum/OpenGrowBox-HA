@@ -8,17 +8,17 @@ _LOGGER = logging.getLogger(__name__)
 class CustomNumber(NumberEntity,RestoreEntity):
     """Custom number entity for multiple hubs."""
 
-    def __init__(self, name, hub_name, coordinator, min_value, max_value, step, unit, initial_value=None):
+    def __init__(self, name, room_name, coordinator, min_value, max_value, step, unit, initial_value=None):
         """Initialize the number entity."""
         self._name = name
-        self.hub_name = hub_name
+        self.room_name = room_name
         self._min_value = min_value
         self._max_value = max_value
         self._step = step
         self._unit = unit
         self._value = initial_value or min_value
         self.coordinator = coordinator
-        self._unique_id = f"{DOMAIN}_{hub_name}_{name.lower().replace(' ', '_')}"
+        self._unique_id = f"{DOMAIN}_{room_name}_{name.lower().replace(' ', '_')}"
 
     @property
     def unique_id(self):
@@ -59,7 +59,7 @@ class CustomNumber(NumberEntity,RestoreEntity):
             "name": f"Device for {self._name}",
             "model": "Number Device",
             "manufacturer": "OpenGrowBox",
-            "suggested_area": self.hub_name,  # Optional: Gibt einen Hinweis für den Bereich
+            "suggested_area": self.room_name,  # Optional: Gibt einen Hinweis für den Bereich
         }
         
     async def async_added_to_hass(self):
@@ -93,57 +93,68 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Create number entities
     numbers = [
-        CustomNumber(f"OGB_LeafTemp_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_LeafTemp_Offset_{coordinator.room_name}", coordinator.room_name, coordinator,
                 min_value=0.0, max_value=5.0, step=0.1, unit="°C", initial_value=2.0),
-        CustomNumber(f"OGB_VPDTarget_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_VPDTarget_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=5.0, step=0.1, unit="kPa", initial_value=0.0),
-        CustomNumber(f"OGB_VPDTolerance_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                    min_value=0.0, max_value=0.2, step=0.01, unit="kPa", initial_value=0.02),
-      
-
-   
-        CustomNumber(f"OGB_TemperatureWeight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_VPDTolerance_{coordinator.room_name}", coordinator.room_name, coordinator,
+                    min_value=0.0, max_value=25, step=0.1, unit="%", initial_value=0.1),
+        
+        CustomNumber(f"OGB_TemperatureWeight_{coordinator.room_name}", coordinator.room_name, coordinator,
                      min_value=00.0, max_value=2.0, step=0.1, unit="X", initial_value=1.0),
-        CustomNumber(f"OGB_HumidityWeight_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_HumidityWeight_{coordinator.room_name}", coordinator.room_name, coordinator,
                      min_value=0.0, max_value=2.0, step=0.1, unit="X", initial_value=1.0),
         
-        ##PUMP
-        CustomNumber(f"OGB_PumpIntervall_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=24, step=0.1, unit="Hours", initial_value=0),
-        CustomNumber(f"OGB_Waterduration_{coordinator.hub_name}", coordinator.hub_name, coordinator,
-                     min_value=0.0, max_value=600, step=1, unit="Seconds", initial_value=0),
-        
+        ##Temp/Hum Min/MAX
+        CustomNumber(f"OGB_MinTemp_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     min_value=0.0, max_value=35, step=0.25, unit="°C", initial_value=0),
+        CustomNumber(f"OGB_MaxTemp_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     min_value=0.0, max_value=35, step=0.25, unit="°C", initial_value=0),
+        CustomNumber(f"OGB_MinHum_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     min_value=0.0, max_value=100, step=0.25, unit="%", initial_value=0),
+        CustomNumber(f"OGB_MaxHum_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     min_value=0.0, max_value=100, step=0.25, unit="%", initial_value=0),     
         
         ##CO2
-        CustomNumber(f"OGB_CO2MinValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_CO2MinValue_{coordinator.room_name}", coordinator.room_name, coordinator,
                      min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
-        CustomNumber(f"OGB_CO2MaxValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_CO2MaxValue_{coordinator.room_name}", coordinator.room_name, coordinator,
                      min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
-        CustomNumber(f"OGB_CO2TargetValue_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_CO2TargetValue_{coordinator.room_name}", coordinator.room_name, coordinator,
                      min_value=0.0, max_value=2000, step=5, unit="ppm", initial_value=400),
         
+        
+        ## PlantTimes
+        CustomNumber(f"OGB_BreederBloomDays_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     min_value=0, max_value=150, step=1, unit="days", initial_value=0),
+        
+        CustomNumber(f"OGB_PlantFoodIntervall_{coordinator.room_name}", coordinator.room_name, coordinator,
+                     min_value=0, max_value=60000, step=1, unit="minutes", initial_value=60),           
+
+        
+        
         # PID VPD
-        CustomNumber(f"OGB_ProportionalVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_ProportionalVPDFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=5.0, step=0.1, unit="X", initial_value=1.0),
-        CustomNumber(f"OGB_IntegralVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_IntegralVPDFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=0.2, step=0.01, unit="X", initial_value=0.01),
-        CustomNumber(f"OGB_DerivativVPDFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_DerivativVPDFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=2.0, step=0.1, unit="X", initial_value=0.1),
 
         # PID TEMP
-        CustomNumber(f"OGB_ProportionalTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_ProportionalTempFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=10.0, step=0.5, unit="X", initial_value=5.0),
-        CustomNumber(f"OGB_IntegralTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_IntegralTempFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=1.0, step=0.05, unit="X", initial_value=0.05),
-        CustomNumber(f"OGB_DerivativTempFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_DerivativTempFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=2.0, step=0.1, unit="X", initial_value=0.5),
 
         # PID Hum
-        CustomNumber(f"OGB_ProportionalHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_ProportionalHumFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=10.0, step=0.5, unit="X", initial_value=5.0),
-        CustomNumber(f"OGB_IntegralHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_IntegralHumFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=0.5, step=0.02, unit="X", initial_value=0.02),
-        CustomNumber(f"OGB_DerivativHumFaktor_{coordinator.hub_name}", coordinator.hub_name, coordinator,
+        CustomNumber(f"OGB_DerivativHumFaktor_{coordinator.room_name}", coordinator.room_name, coordinator,
                     min_value=0.0, max_value=1.0, step=0.1, unit="X", initial_value=0.1),
    
     ]

@@ -46,6 +46,7 @@ Welcome to the **OpenGrowBox Home Assistant Integration** repository! This proje
 1. Add the OpenGrowBox integration to your custom components directory and restart HA
 2. Add the Integration.
 3. Create your Rooms and enjoy a full auotmated dynamic Grow Enviorment
+4. Move the devices to that created Room
 
 ### Device Configuration
 
