@@ -96,6 +96,7 @@ class OGBConf:
         "breederbloomdays": 0,
         "planttotaldays": 0,
         "totalbloomdays": 0,
+        "nextFoodTime":0,
     })
     lightPlantStages: Dict[str, LightStage] = field(default_factory=lambda: {
         "Germination": LightStage(min=20, max=30, phase=""),

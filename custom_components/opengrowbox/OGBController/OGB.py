@@ -49,7 +49,12 @@ class OpenGrowBox:
         
         #LightSheduleUpdate
         self.eventManager.on("LightSheduleUpdate", self.lightSheduleUpdate)
+        
+        # Plant Times
         self.eventManager.on("PlantTimeChange",self._update_plantDates)
+        self.eventManager.on("didFeedPlants",self._feedTimeCounter)
+        
+       
         
     def __str__(self):
         return (f"{self.name}' Running")
@@ -192,11 +197,12 @@ class OpenGrowBox:
             f"ogb_breederbloomdays_{self.room.lower()}": self._update_breederbloomdays_value,
             f"ogb_growstartdate_{self.room.lower()}": self._update_growstartdates_value,
             f"ogb_bloomswitchdate_{self.room.lower()}": self._update_bloomswitchdate_value,
-        
+            
+            f"ogb_plantfoodintervall_{self.room.lower()}": self._update_nextFoodTime,
             #f"ogb_planttotaldays{self.room.lower()}": self._updatePlantDates,
             #f"ogb_totalbloomdays{self.room.lower()}": self._updatePlantDates,
 
-            
+           
             
             # Ambient Borrow Feature
             #f"ogb_ambientborrow_{self.room.lower()}": self._update_ambientBorrow_control,
@@ -878,9 +884,59 @@ class OpenGrowBox:
             _LOGGER.error(f"Fehler beim Aktualisieren der Sensoren '{planttotaldays_entity}' und '{totalbloomdays_entity}': {e}")
 
 
-    
+    async def _update_nextFoodTime(self,data):
+        """
+        Aktualisiere Next Food Time
+        """
+        value = data.newState[0]
+        current_value = self.dataStore.getDeep("plantDates.nextFoodTime")
+        if current_value != value:
+            _LOGGER.warn(f"{self.room}: Aktualisiere Bloom Switch auf {value}")
+            self.dataStore.setDeep("plantDates.nextFoodTime", value)
+            await self.eventManager.emit("didFeedPlants",value)
+
+    async def _feedTimeCounter(self, data):
+        nextFeedTime_entity = f"sensor.ogb_plantfoodnextfeed{self.room.lower()}"
         
-    
+        while True:
+            feedIntervall = self.dataStore.getDeep("plantDates.nextFoodTime")
+            now = datetime.now()
+            
+            try:
+                # Falls der Wert nicht gesetzt oder ungültig ist (z. B. "0.0"), wird ein Fallback genutzt.
+                if feedIntervall in [0, "0", "0.0", 0.0]:
+                    raise ValueError("Kein gültiger ISO-String vorhanden")
+                
+                # Stelle sicher, dass der Wert ein String ist.
+                if not isinstance(feedIntervall, str):
+                    feedIntervall = str(feedIntervall)
+                
+                nextFeedTime = datetime.fromisoformat(feedIntervall)
+                remaining = nextFeedTime - now
+                planttotaldays = remaining.total_seconds() / 86400
+                
+            except Exception as e:
+                _LOGGER.error(f"Fehler beim Parsen der nächsten Fütterungszeit: {e}")
+                # Fallback: Wenn der Wert ungültig ist, wird 0 Tage angezeigt.
+                planttotaldays = 0
+            
+            try:
+                await self.hass.services.async_call(
+                    domain="opengrowbox",
+                    service="update_sensor",
+                    service_data={
+                        "entity_id": nextFeedTime_entity,
+                        "value": planttotaldays
+                    },
+                    blocking=True
+                )
+            
+                _LOGGER.debug(f"Sensor '{nextFeedTime_entity}' wurden mit Werten aktualisiert: {planttotaldays}")
+            except Exception as e:
+                _LOGGER.error(f"Fehler beim Aktualisieren des Sensors '{nextFeedTime_entity}': {e}")
+            
+            await asyncio.sleep(60)
+            
     ## Drying
     async def _udpate_drying_mode(self, data):
         """
