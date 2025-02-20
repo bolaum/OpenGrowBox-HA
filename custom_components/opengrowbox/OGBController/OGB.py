@@ -807,8 +807,6 @@ class OpenGrowBox:
         bloomSwitch = self.dataStore.getDeep("plantDates.bloomswitchdate")
         growstart = self.dataStore.getDeep("plantDates.growstartdate")
         breederDays = self.dataStore.getDeep("plantDates.breederbloomdays")
-        plantDates = self.dataStore.get('plantDates')
-        _LOGGER.error(f"{self.room}: Plant Dates {plantDates}")
 
         # Überprüfen, ob breederDays ein gültiger Wert ist
         try:
