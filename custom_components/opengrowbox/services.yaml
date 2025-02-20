@@ -1,0 +1,10 @@
+update_sensor:
+  name: Update Sensor
+  description: Aktualisiert den Wert eines Sensors.
+  fields:
+    entity_id:
+      description: Die ID des zu aktualisierenden Sensors.
+      example: sensor.ogb_plantfoodnextfeed
+    value:
+      description: Der neue Wert, der gesetzt werden soll.
+      example: 50
