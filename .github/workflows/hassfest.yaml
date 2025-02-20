@@ -1,18 +1,18 @@
-name: Hassfest
+name: Test hassfest
 
 on:
   pull_request:
+    branches: ["main"]
   push:
-    branches:
-      - main
-      - master
+    branches: ["main"]
 
 jobs:
   hassfest:
     runs-on: ubuntu-latest
+    name: hassfest
     steps:
-      - name: Checkout repository
+      - name: Check out the repository
         uses: actions/checkout@v4
-
-      - name: Run Hassfest
-        uses: home-assistant/actions/hassfest@master
+      
+      - name: Test hassfest
+        uses: ./hassfest
