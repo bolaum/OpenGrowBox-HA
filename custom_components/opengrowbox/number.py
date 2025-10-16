@@ -1,7 +1,7 @@
 from homeassistant.components.number import NumberEntity
 from homeassistant.helpers.restore_state import RestoreEntity
 import logging
-from .const import DOMAIN
+from .const import DEFAULT_COOLDOWN_MINUTES, DOMAIN
 import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
@@ -196,7 +196,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         
         # Area
         CustomNumber(f"OGB_Grow_Area_M2_{coordinator.room_name}", coordinator.room_name, coordinator,
-                    min_value=0, max_value=5, step=0.01, unit="m²", initial_value=0),   
+                    min_value=0, max_value=5, step=0.01, unit="m²", initial_value=0),
+                
+        # Cooldowns
+        *(CustomNumber(f"OGB_Cooldown_{label}_{coordinator.room_name}", coordinator.room_name, coordinator,
+            min_value=0, max_value=30, step=1, unit="min", initial_value=DEFAULT_COOLDOWN_MINUTES[label]) 
+            for label in DEFAULT_COOLDOWN_MINUTES)
     ]
 
     if "numbers" not in hass.data[DOMAIN]:

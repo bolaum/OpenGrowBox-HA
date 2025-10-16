@@ -3,6 +3,9 @@ import logging
 import asyncio
 from datetime import datetime
 import aiohttp
+from functools import partial
+
+from ..const import DEFAULT_COOLDOWN_MINUTES
 from .utils.calcs import calculate_avg_value,calculate_dew_point,calculate_current_vpd,calculate_perfect_vpd,calc_light_to_ppfd_dli
 from .utils.sensorUpdater import update_sensor_via_service,_update_specific_sensor,_update_specific_number
 from .utils.lightTimeHelpers import hours_between
@@ -463,6 +466,10 @@ class OpenGrowBox:
             
             # Area
             f"ogb_grow_area_m2_{self.room.lower()}": self._update_Grow_Area,
+            
+            # Cooldowns
+            **{f"ogb_cooldown_{label.lower()}_{self.room.lower()}": partial(self._update_cooldown_minutes, label) 
+                for label in DEFAULT_COOLDOWN_MINUTES},
 
         }
 
@@ -1096,6 +1103,24 @@ class OpenGrowBox:
         current_value = self.dataStore.getDeep("controlOptionData.weights.hum")
         if current_value != value:
                 self.dataStore.setDeep("controlOptionData.weights.hum", value)
+
+    async def _update_cooldown_minutes(self, capability, data):
+        """Update per-capability cooldown minutes coming from number entities."""
+        
+        _LOGGER.debug(f"{self.room}: Updating cooldown for {capability} with data {data}")
+        
+        value = data.newState[0]
+        if value is None:
+            return
+
+        try:
+            minutes = round(max(float(value), 0.0))
+        except (TypeError, ValueError):
+            _LOGGER.error("%s: Invalid cooldown value %s for capability %s", self.room, value, capability)
+            return
+
+        path = f"controlOptionData.cooldowns.{capability}"
+        self.dataStore.setDeep(path, minutes)
 
     ## HYDRO
     async def _update_hydro_mode(self,data):

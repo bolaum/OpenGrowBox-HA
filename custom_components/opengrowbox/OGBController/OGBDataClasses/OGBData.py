@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+from ...const import DEFAULT_COOLDOWN_MINUTES
+
 @dataclass
 class LightStage:
     min: int
@@ -177,7 +179,8 @@ class OGBConf:
     controlOptionData: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
         "co2ppm": {"target": 0, "current":400, "minPPM": 400, "maxPPM": 1800},
         "weights": {"temp": None, "hum": None, "defaultValue": 1},
-        "minmax":{"minTemp":None,"maxTemp":None,"minHum":None,"maxHum":None}
+        "minmax":{"minTemp":None,"maxTemp":None,"minHum":None,"maxHum":None},
+        "cooldowns": DEFAULT_COOLDOWN_MINUTES.copy(),
     })
     isPlantDay: Dict[str, Any] = field(default_factory=lambda: {
         "islightON": False,
