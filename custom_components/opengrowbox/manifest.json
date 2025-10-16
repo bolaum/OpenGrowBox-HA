@@ -8,6 +8,6 @@
   "integration_type": "hub",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/OpenGrow-Box/OpenGrowBox-HA/issues",
-  "requirements": [],
+  "requirements": ["python-socketio"],
   "version": "1.3.0"
 }

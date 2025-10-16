@@ -906,7 +906,7 @@ class OpenGrowBox:
         value = float(data.newState[0])
         current_value = self.dataStore.getDeep("vpd.targeted")
 
-        if current_value != value:
+        if self.dataStore.get("tentMode") == "Targeted VPD" and current_value != value:
             _LOGGER.info(f"{self.room}: Update Target VPD to {value}")
             self.dataStore.setDeep("vpd.targeted", value)
 
