@@ -306,6 +306,27 @@ class Device:
                 else:
                     raise ValueError(f"Invalid Entity state '{switch_value}' for {self.deviceName}")
 
+    async def identifyIfRunningStateAsync(self, expectedValue):
+        await asyncio.sleep(5)
+        
+        if not self.isAcInfinDev:
+            for switch in self.switches:
+                switch_value = switch.get("value")
+                
+                if switch_value != expectedValue:
+                    _LOGGER.warning(f"{self.deviceName}: Switch state '{switch_value}' does not match expected mode '{expectedValue}'.")
+                
+                if switch_value == "on":                    
+                    self.isRunning = True
+                    return
+                elif switch_value == "off":                    
+                    self.isRunning = False
+                    return
+                elif switch_value in (None, "unknown", "Unbekannt", "unavailable"):
+                    _LOGGER.warning(f"Invalid Entity state '{switch_value}' for {self.deviceName}")
+                else:
+                    _LOGGER.warning(f"Invalid Entity state '{switch_value}' for {self.deviceName}")
+
     # Überprüfe, ob das Gerät dimmbar ist
     def identifDimmable(self):
         allowedDeviceTypes = ["ventilation", "exhaust","intake","light","humdifier","dehumidifier","heater","cooler"]
@@ -460,6 +481,8 @@ class Device:
             if not self.switches:
                 _LOGGER.error(f"{self.deviceName} has not Switch to Activate or Turn On")
                 return
+
+            asyncio.create_task(self.identifyIfRunningStateAsync("on"))
 
             entity_ids = [switch["entity_id"] for switch in self.switches]
 
@@ -757,6 +780,8 @@ class Device:
             if not self.switches:
                 _LOGGER.error(f"{self.deviceName} has NO Switches to Turn OFF")
                 return
+
+            asyncio.create_task(self.identifyIfRunningStateAsync("off"))
 
             entity_ids = [switch["entity_id"] for switch in self.switches]
 
